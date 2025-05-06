@@ -1,0 +1,44 @@
+/* Sidebar background */
+nav.sidebar.js-sidebar {
+    background-color: #064469 !important;
+}
+
+/* Sidebar link */
+.sidebar-link {
+    color: #ffffff !important;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Sidebar aktif menu */
+.sidebar-item.active {
+    background-color: #3B82F6 !important;
+    border-radius: 0 20px 20px 0;
+}
+
+/* Hover efek */
+.sidebar-item:hover .sidebar-link {
+    background-color: #2563EB !important;
+    color: #ffffff !important;
+}
+
+/* Hover khusus logout */
+.sidebar-item .logout-link:hover {
+    background-color: #EF4444 !important;
+    color: #ffffff !important;
+}
+
+/* Feather icon */
+.sidebar-link i {
+    stroke: #ffffff !important;
+}
+
+/* Sidebar branding */
+.sidebar-brand h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.sidebar-brand img {
+    border: 2px solid white;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}

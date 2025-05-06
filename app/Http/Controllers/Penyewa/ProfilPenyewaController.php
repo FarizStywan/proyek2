@@ -50,10 +50,6 @@ class ProfilPenyewaController extends Controller
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
         // Simpan perubahan
         $user->save();
 

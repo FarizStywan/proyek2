@@ -127,6 +127,15 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'midtrans' => [
+        'driver' => 'daily',
+        'path' => storage_path('logs/midtrans/midtrans.log'),
+        'level' => 'debug',
+        'days' => 14,
+        'replace_placeholders' => true,
+        'permission' => 0664,
+        ],
+
     ],
 
 ];

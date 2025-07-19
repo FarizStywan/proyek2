@@ -53,10 +53,11 @@ class AuthController extends Controller
 
     // ==== REGISTER ====
     public function showPenyewaRegisterForm()
-    {
-        $kamars = Kamar::all();
-        return view('auth.penyewa.register', ['role' => 'penyewa', 'kamars' => $kamars]);
-    }
+{
+    $kamars = Kamar::where('status', 'Kosong')->get(); // ✅ hanya ambil kamar kosong
+    return view('auth.penyewa.register', ['role' => 'penyewa', 'kamars' => $kamars]);
+}
+
 
     public function penyewaRegister(Request $request)
     {
@@ -108,14 +109,19 @@ class AuthController extends Controller
 }
 
     // ==== LOGOUT ====
-    public function logout()
-    {
-        if (Auth::guard('admin')->check()) {
-            Auth::guard('admin')->logout();
-            return redirect('/admin/login');
-        }
-        
-        Auth::guard('web')->logout();
-        return redirect('/penyewa/login');
+public function logout()
+{
+    if (Auth::guard('admin')->check()) {
+        Auth::guard('admin')->logout();
+        return redirect()->route('admin.login'); // Pastikan route ini benar
     }
+
+    if (Auth::guard('web')->check()) {
+        Auth::guard('web')->logout();
+        return redirect()->route('penyewa.login'); // Pastikan route ini benar
+    }
+
+    // Jika tidak ada yang login
+    return redirect('/');
+}
 }

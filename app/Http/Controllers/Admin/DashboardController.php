@@ -20,7 +20,7 @@ class DashboardController extends Controller
         // Data Kamar
         $totalKamar = Kamar::count();
         $kamarTerisi = Kamar::where('status', 'Terisi')->count();
-        $kamarTersedia = Kamar::where('status', 'Tersedia')->count();
+        $kamarTersedia = Kamar::where('status', 'Kosong')->count();
 
         // Pembayaran
         $totalPendapatan = Tagihan::where('status', 'Lunas')->sum('jumlah');

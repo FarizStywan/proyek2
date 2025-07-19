@@ -8,71 +8,74 @@ use App\Models\Kamar;
 
 class KamarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kamar = Kamar::all();
+        $query = Kamar::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('nomor_kamar', 'like', "%$search%");
+        }
+
+        $kamar = $query->paginate(10)->withQueryString();
+
         return view('auth.admin.kamar.index', compact('kamar'));
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'nomor_kamar' => 'required|string|unique:kamar,nomor_kamar',
-        'fasilitas' => 'required|in:AC,Non-AC',
-        'harga' => 'required|string',
-        'status' => 'required|in:Kosong,Terisi',
-    ]);
+    {
+        $request->validate([
+            'nomor_kamar' => 'required|string|unique:kamar,nomor_kamar',
+            'fasilitas' => 'required|in:AC,Non-AC',
+            'harga' => 'required|string',
+            'status' => 'required|in:Kosong,Terisi',
+        ]);
 
-    // Konversi harga dari format Rupiah ke angka
-    $harga = preg_replace('/[^0-9]/', '', $request->harga);
+        $harga = preg_replace('/[^0-9]/', '', $request->harga);
 
-    Kamar::create([
-        'nomor_kamar' => $request->nomor_kamar,
-        'fasilitas' => $request->fasilitas,
-        'harga' => $harga, // Harga sudah dalam format angka
-        'status' => $request->status,
-    ]);
+        Kamar::create([
+            'nomor_kamar' => $request->nomor_kamar,
+            'fasilitas' => $request->fasilitas,
+            'harga' => $harga,
+            'status' => $request->status,
+        ]);
 
-    return redirect()->route('admin.kamar.index')->with('success', 'Kamar berhasil ditambahkan!');
-}
+        return redirect()->route('admin.kamar.index')->with('success', 'Kamar berhasil ditambahkan!');
+    }
 
+    public function edit($id)
+    {
+        $kamar = Kamar::findOrFail($id);
+        return view('auth.admin.kamar.edit', compact('kamar'));
+    }
 
-public function edit($id)
-{
-    $kamar = Kamar::findOrFail($id);
-    return view('auth.admin.kamar.edit', compact('kamar'));
-}
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nomor_kamar' => 'required|string|unique:kamar,nomor_kamar,' . $id,
+            'fasilitas' => 'required|in:AC,Non-AC',
+            'harga' => 'required|string',
+            'status' => 'required|in:Kosong,Terisi',
+        ]);
 
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'nomor_kamar' => 'required|string|unique:kamar,nomor_kamar,' . $id,
-        'fasilitas' => 'required|in:AC,Non-AC',
-        'harga' => 'required|string',
-        'status' => 'required|in:Kosong,Terisi',
-    ]);
+        $harga = preg_replace('/[^0-9]/', '', $request->harga);
 
-    // Konversi harga dari format Rupiah ke angka
-    $harga = preg_replace('/[^0-9]/', '', $request->harga);
+        $kamar = Kamar::findOrFail($id);
+        $kamar->update([
+            'nomor_kamar' => $request->nomor_kamar,
+            'fasilitas' => $request->fasilitas,
+            'harga' => $harga,
+            'status' => $request->status,
+        ]);
 
-    $kamar = Kamar::findOrFail($id);
-    $kamar->update([
-        'nomor_kamar' => $request->nomor_kamar,
-        'fasilitas' => $request->fasilitas,
-        'harga' => $harga,
-        'status' => $request->status,
-    ]);
-
-    return redirect()->route('admin.kamar.index')->with('success', 'Kamar berhasil diperbarui!');
-}
-
+        return redirect()->route('admin.kamar.index')->with('success', 'Kamar berhasil diperbarui!');
+    }
 
     public function destroy($id)
     {
         $kamar = Kamar::findOrFail($id);
-        $kamar->delete(); // Hapus data dari database
+        $kamar->delete();
 
         return redirect()->route('admin.kamar.index')->with('success', 'Kamar berhasil dihapus!');
     }
-
 }

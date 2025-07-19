@@ -8,10 +8,23 @@ use App\Models\Penyewa;
 
 class PenyewaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $penyewa = Penyewa::all(); // Ambil semua data penyewa
-        return view('auth.admin.penyewa.index', compact('penyewa'));
+        // Ambil input pencarian
+        $search = $request->input('search');
+
+        // Query pencarian
+        $query = Penyewa::query();
+
+        if ($search) {
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nomor_kamar', 'like', "%{$search}%");
+        }
+
+        // Pagination
+        $penyewa = $query->paginate(10)->withQueryString();
+
+        return view('auth.admin.penyewa.index', compact('penyewa', 'search'));
     }
 
     public function edit($id)
@@ -24,13 +37,13 @@ class PenyewaController extends Controller
     {
         $request->validate([
             'nomor_kamar' => 'required',
-            'status' => 'required|in:Aktif,Non-Aktif',
+            'status' => 'required|in:Aktif,Tidak Aktif',
         ]);
 
         $penyewa = Penyewa::findOrFail($id);
         $penyewa->update($request->only('nomor_kamar', 'status'));
 
-        return redirect()->route('auth.admin.penyewa.index')->with('success', 'Data penyewa berhasil diperbarui.');
+        return redirect()->route('admin.penyewa.index')->with('success', 'Data penyewa berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -38,6 +51,6 @@ class PenyewaController extends Controller
         $penyewa = Penyewa::findOrFail($id);
         $penyewa->delete();
 
-        return redirect()->route('auth.admin.penyewa.index')->with('success', 'Data penyewa berhasil dihapus.');
+        return redirect()->route('admin.penyewa.index')->with('success', 'Data penyewa berhasil dihapus.');
     }
 }

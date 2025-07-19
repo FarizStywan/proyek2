@@ -4,7 +4,6 @@
 @section('page-title', 'Bayar Sewa')
 
 @section('content')
-<!-- Main Content -->
 <div class="container-fluid px-4">
 
     <!-- Header Section -->
@@ -29,14 +28,20 @@
                         Rp {{ number_format($harga_kamar, 0, ',', '.') }}
                     </h2>
                     <p class="text-muted mt-3 fs-5">Bayar sebelum jatuh tempo untuk menghindari denda keterlambatan.</p>
-                    
-                    <form action="{{ route('auth.penyewa.bayar') }}" method="POST" class="mt-4">
-                        @csrf
-                        <input type="hidden" name="tagihan_id" value="{{ $tagihan_id }}">
-                        <input type="hidden" name="jumlah" value="{{ $jumlah }}">
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
+
+                    @if($harga_kamar > 0)
+                        <button id="pay-button" class="btn btn-primary btn-lg rounded-pill px-5 mt-4">
                             Bayar Sekarang
                         </button>
+                    @else
+                        <div class="alert alert-warning mt-4">
+                            Tidak ada tagihan aktif.
+                        </div>
+                    @endif
+
+                    <form id="payment-form" style="display: none;">
+                        @csrf
+                        <input type="hidden" id="tagihan_id" name="tagihan_id" value="{{ $tagihan_id }}">
                     </form>
                 </div>
             </div>
@@ -44,4 +49,59 @@
     </div>
 
 </div>
+
+<!-- Load Midtrans Snap.js -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" 
+        data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+
+<!-- Script Bayar -->
+<script>
+    document.getElementById('pay-button').addEventListener('click', function () {
+        // Kirim permintaan ke backend untuk dapatkan snap token
+        fetch("{{ route('penyewa.bayar.process') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                tagihan_id: "{{ $tagihan_id }}"
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.snap_token) {
+                window.snap.pay(data.snap_token, {
+                    onSuccess: function(result){
+                        alert("Pembayaran berhasil!");
+                        location.reload();
+                    },
+                    onPending: function(result){
+                        alert("Menunggu pembayaran...");
+                        location.reload();
+                    },
+                    onError: function(result){
+                        alert("Pembayaran gagal.");
+                        console.log(result);
+                    },
+                    onClose: function(){
+                        alert("Popup pembayaran ditutup.");
+                    }
+                });
+            } else {
+                alert("Gagal mendapatkan token pembayaran.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Terjadi kesalahan saat memproses pembayaran.");
+        });
+    });
+</script>
+
 @endsection

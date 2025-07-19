@@ -3,7 +3,7 @@
 
         {{-- Branding Kos --}}
         <a class="sidebar-brand d-flex flex-column align-items-center py-4 border-bottom border-white" href="{{ url('/') }}">
-            <img src="{{ asset('images/kos-icon.png') }}" alt="Logo Kos" class="rounded-circle mb-2" width="64" height="64">
+            <img src="{{ asset('images/logokos.png') }}" alt="Logo Kos" class="rounded-circle mb-2" width="64" height="64">
             <h3 class="text-white mb-0">Sobat <span class="text-warning">Kos</span></h3>
             <small class="text-white-50">Smart Living</small>
         </a>
@@ -31,16 +31,16 @@
             
 
             {{-- Status Pembayaran (Nonaktifkan sementara) --}}
-            <li class="sidebar-item {{ request()->is('penyewa/status-pembayaran') ? 'active' : '' }}">
-                <a class="sidebar-link" href="#" onclick="return false;">
+            <li class="sidebar-item {{ request()->is('penyewa/status-pembayaran') || request()->routeIs('penyewa.status') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('penyewa.status') }}">
                     <i data-feather="credit-card" class="align-middle"></i>
                     <span class="align-middle">Status Pembayaran</span>
                 </a>
             </li>
 
             {{-- Histori Pembayaran (Nonaktifkan sementara) --}}
-            <li class="sidebar-item {{ request()->is('penyewa/histori-pembayaran') ? 'active' : '' }}">
-                <a class="sidebar-link" href="#" onclick="return false;">
+            <li class="sidebar-item {{ request()->is('penyewa/histori') || request()->routeIs('auth.penyewa.histori') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('auth.penyewa.histori') }}">
                     <i data-feather="clock" class="align-middle"></i>
                     <span class="align-middle">Histori Pembayaran</span>
                 </a>

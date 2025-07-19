@@ -51,7 +51,7 @@
             <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-body text-center p-5">
                     <h5 class="card-title text-dark fs-4">Histori Pembayaran</h5>
-                    <a href="#" class="btn btn-success btn-lg mt-4 rounded-pill">Lihat Riwayat</a>
+                    <a href="{{ route('auth.penyewa.histori') }}" class="btn btn-success btn-lg mt-4 rounded-pill">Lihat Riwayat</a>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
             <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-body text-center p-5">
                     <h5 class="card-title text-dark fs-4">Pengaduan</h5>
-                    <a href="#" class="btn btn-warning btn-lg mt-4 rounded-pill text-white">Kirim Pengaduan</a>
+                    <a href="{{ route('auth.penyewa.pengaduan.index') }}" class="btn btn-warning btn-lg mt-4 rounded-pill text-white">Kirim Pengaduan</a>
                 </div>
             </div>
         </div>
